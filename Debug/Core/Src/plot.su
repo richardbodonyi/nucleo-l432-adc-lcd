@@ -1,0 +1,4 @@
+../Core/Src/plot.c:7:6:init_ili9341_lcd	56	static
+../Core/Src/plot.c:20:6:fill_screen	8	static
+../Core/Src/plot.c:24:10:translate_y	16	static
+../Core/Src/plot.c:28:6:draw_line	32	static
