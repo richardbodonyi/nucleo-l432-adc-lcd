@@ -32,7 +32,7 @@ extern "C" {
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
-#include "ili9341_gfx.h"
+//#include "ili9341_gfx.h"
 
 /* USER CODE END Includes */
 
@@ -67,23 +67,27 @@ void Error_Handler(void);
 #define SWCLK_GPIO_Port GPIOA
 #define VCP_RX_Pin GPIO_PIN_15
 #define VCP_RX_GPIO_Port GPIOA
-#define LD3_Pin GPIO_PIN_3
-#define LD3_GPIO_Port GPIOB
+#define LED_Pin GPIO_PIN_3
+#define LED_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 
-#define TFT_CS_Pin GPIO_PIN_6
+#define TFT_CS_Pin GPIO_PIN_0
 #define TFT_CS_GPIO_Port GPIOB
 #define SPI1_TFT_SCK_Pin GPIO_PIN_1
 #define SPI1_TFT_SCK_GPIO_Port GPIOA
-//#define SPI1_TFT_MISO_Pin GPIO_PIN_6
-//#define SPI1_TFT_MISO_GPIO_Port GPIOA
 #define SPI1_TFT_MOSI_Pin GPIO_PIN_7
 #define SPI1_TFT_MOSI_GPIO_Port GPIOA
-#define TFT_DC_Pin GPIO_PIN_0
+#define TFT_DC_Pin GPIO_PIN_6
 #define TFT_DC_GPIO_Port GPIOB
 #define TFT_RESET_Pin GPIO_PIN_7
 #define TFT_RESET_GPIO_Port GPIOB
+
+#define TOUCH_IRQ_Pin GPIO_PIN_6
+#define TOUCH_IRQ_GPIO_Port GPIOA
+#define TOUCH_IRQ_EXTI_IRQn EXTI15_10_IRQn
+#define TOUCH_CS_Pin GPIO_PIN_12
+#define TOUCH_CS_GPIO_Port GPIOA
 
 /* USER CODE END Private defines */
 

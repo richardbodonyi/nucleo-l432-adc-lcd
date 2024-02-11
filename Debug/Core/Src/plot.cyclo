@@ -1,4 +1,6 @@
-../Core/Src/plot.c:7:6:init_ili9341_lcd	1
-../Core/Src/plot.c:20:6:fill_screen	1
-../Core/Src/plot.c:24:10:translate_y	1
-../Core/Src/plot.c:28:6:draw_line	1
+../Core/Src/plot.c:9:6:init_ili9341_lcd	1
+../Core/Src/plot.c:23:6:wait	2
+../Core/Src/plot.c:28:6:print_screen_details	1
+../Core/Src/plot.c:36:6:clear_screen	1
+../Core/Src/plot.c:47:10:translate_y_	1
+../Core/Src/plot.c:51:6:draw_line	1
