@@ -25,7 +25,7 @@
 #include <string.h>
 #include <stdio.h>
 #include "ili9341_gfx.h"
-//#include "plot.h"
+#include "task.h"
 
 /* USER CODE END Includes */
 
@@ -58,12 +58,6 @@ TIM_HandleTypeDef htim16;
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
-
-ili9341_t* ili9341_lcd;
-
-uint16_t values[2];
-uint16_t previous_value;
-uint16_t x = 0;
 
 /* USER CODE END PV */
 
@@ -121,41 +115,14 @@ int main(void)
   MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
 
-  ili9341_lcd = ili9341_new(
-          &hspi1,
-          TFT_RESET_GPIO_Port, TFT_RESET_Pin,
-          TFT_CS_GPIO_Port,    TFT_CS_Pin,
-          TFT_DC_GPIO_Port,    TFT_DC_Pin,
-          isoLandscape,
-          TOUCH_CS_GPIO_Port,  TOUCH_CS_Pin,
-          TOUCH_IRQ_GPIO_Port, TOUCH_IRQ_Pin,
-          itsSupported,
-          itnNormalized);
-  ili9341_spi_tft_select(ili9341_lcd);
-
-  char message[40];
-  sprintf(message, "Screen: %d x %d\r\n", ili9341_lcd->screen_size.width, ili9341_lcd->screen_size.height);
-  HAL_UART_Transmit(&huart2, (uint8_t*) message, strlen(message), 100);
-  sprintf(message, "Orientation: %d\r\n", ili9341_lcd->orientation);
-  HAL_UART_Transmit(&huart2, (uint8_t*) message, strlen(message), 100);
-
-  ili9341_fill_screen(ili9341_lcd, ILI9341_BLACK);
-  ili9341_text_attr_t attr;
-  attr.bg_color = ILI9341_BLUE;
-  attr.fg_color = ILI9341_WHITE;
-  attr.font = &ili9341_font_11x18;
-  attr.origin_x = 50;
-  attr.origin_y = 50;
-  ili9341_draw_string(ili9341_lcd, attr, "Hello");
-
-  HAL_ADC_Start_DMA(&hadc1, (uint32_t*) values, 2);
-  HAL_TIM_Base_Start_IT(&htim16);
+  init_tasks(&hspi1, &htim16, &hadc1, &huart2);
 
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1) {
+    manage_tasks();
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -369,7 +336,7 @@ static void MX_TIM16_Init(void)
   htim16.Instance = TIM16;
   htim16.Init.Prescaler = 32 - 1;
   htim16.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim16.Init.Period = 4000 - 1;
+  htim16.Init.Period = 8000 - 1;
   htim16.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim16.Init.RepetitionCounter = 0;
   htim16.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
@@ -454,17 +421,17 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0|LED_Pin|GPIO_PIN_6|GPIO_PIN_7, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, CS_Pin|LED_Pin|DC_Pin|RESET_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pins : PB0 PB6 */
-  GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_6;
+  /*Configure GPIO pins : CS_Pin DC_Pin */
+  GPIO_InitStruct.Pin = CS_Pin|DC_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : LED_Pin PB7 */
-  GPIO_InitStruct.Pin = LED_Pin|GPIO_PIN_7;
+  /*Configure GPIO pins : LED_Pin RESET_Pin */
+  GPIO_InitStruct.Pin = LED_Pin|RESET_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -475,32 +442,6 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-
-void printToUart(UART_HandleTypeDef *huart, char *msg) {
-  HAL_UART_Transmit(huart, (uint8_t*) msg, strlen(msg), 100);
-}
-
-uint16_t translate_y(uint16_t value) {
-  return 239 - value * 0.0589;
-}
-
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
-  int16_t value = values[0];
-  if (x == 0) {
-    ili9341_draw_pixel(ili9341_lcd, ILI9341_LIGHTGREY, x, translate_y(value));
-  }
-  else {
-    ili9341_draw_line(ili9341_lcd, ILI9341_LIGHTGREY, x, translate_y(previous_value), x + 1, translate_y(value));
-  }
-  x++;
-  if (x >= 319) {
-    x = 0;
-  }
-  previous_value = value;
-//  char message[40];
-//  sprintf(message, "%d -> %d\r\n", value, translate_y(value));
-//  printToUart(&huart2, message);
-}
 
 //void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
 //  if(huart->Instance == huart1.Instance) {

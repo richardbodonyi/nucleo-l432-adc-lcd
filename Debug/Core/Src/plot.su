@@ -1,6 +1,0 @@
-../Core/Src/plot.c:9:6:init_ili9341_lcd	56	static
-../Core/Src/plot.c:23:6:wait	8	static
-../Core/Src/plot.c:28:6:print_screen_details	56	static
-../Core/Src/plot.c:36:6:clear_screen	32	static
-../Core/Src/plot.c:47:10:translate_y_	16	static
-../Core/Src/plot.c:51:6:draw_line	32	static
