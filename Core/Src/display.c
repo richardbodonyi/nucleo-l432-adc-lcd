@@ -20,6 +20,10 @@ uint16_t fill_index = 0;
 
 uint16_t draw_index = 0;
 
+uint16_t min_y = 3650;
+
+uint16_t max_y = 4095;
+
 void init_display(SPI_HandleTypeDef* spi,
     TIM_HandleTypeDef* timer,
     ADC_HandleTypeDef* adc,
@@ -37,24 +41,15 @@ void init_display(SPI_HandleTypeDef* spi,
           itsSupported,
           itnNormalized);
   ili9341_spi_tft_select(ili9341_lcd);
-
-  char message[40];
-  sprintf(message, "Screen: %d x %d\r\n", ili9341_lcd->screen_size.width, ili9341_lcd->screen_size.height);
-  HAL_UART_Transmit(uart_hal, (uint8_t*) message, strlen(message), 100);
-  sprintf(message, "Orientation: %d\r\n", ili9341_lcd->orientation);
-  HAL_UART_Transmit(uart_hal, (uint8_t*) message, strlen(message), 100);
-
   ili9341_fill_screen(ili9341_lcd, ILI9341_BLACK);
 
   ili9341_text_attr_t attr;
-  attr.bg_color = ILI9341_BLUE;
-  attr.fg_color = ILI9341_WHITE;
-  attr.font = &ili9341_font_11x18;
-  attr.origin_x = 50;
-  attr.origin_y = 50;
-  ili9341_draw_string(ili9341_lcd, attr, "Hello");
-
-  ili9341_draw_line(ili9341_lcd, ILI9341_RED, 0, 239, 319, 0);
+  attr.bg_color = ILI9341_BLACK;
+  attr.fg_color = ILI9341_LIGHTGREY;
+  attr.font = &ili9341_font_16x26;
+  attr.origin_x = 120;
+  attr.origin_y = 100;
+  ili9341_draw_string(ili9341_lcd, attr, "ECG");
 
   HAL_ADC_Start_DMA(adc, (uint32_t*) dma_values, 1);
 }
@@ -66,13 +61,13 @@ void printToUart(UART_HandleTypeDef *huart, char *msg) {
 
 uint16_t translate_y(uint16_t value) {
 //  return 239 - value * 0.0589;
-  return 239 - (value - 2000) * 0.0589;
+  return ili9341_lcd->screen_size.height - 1 - (value - min_y) * (float) ili9341_lcd->screen_size.height / (max_y - min_y);
 }
 
 void display_graph() {
   if (fill_index > draw_index) {
     int x = draw_index % ili9341_lcd->screen_size.width;
-    ili9341_draw_line(ili9341_lcd, ILI9341_BLACK, x, 0, x, 239);
+    ili9341_draw_line(ili9341_lcd, ILI9341_BLACK, x, 0, x, ili9341_lcd->screen_size.height - 1);
     if (x == 0) {
       ili9341_draw_pixel(ili9341_lcd, ILI9341_LIGHTGREY, x, translate_y(raw_values[draw_index]));
     }
@@ -89,7 +84,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
   }
   raw_values[fill_index] = dma_values[0];
   char message[40];
-  sprintf(message, "%d -> %d\r\n", fill_index, translate_y(raw_values[fill_index]));
+  sprintf(message, "%d\r\n", raw_values[fill_index]);
   printToUart(uart_hal, message);
   fill_index++;
 }
