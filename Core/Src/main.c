@@ -24,8 +24,8 @@
 
 #include <string.h>
 #include <stdio.h>
+#include <task_manager.h>
 #include "ili9341_gfx.h"
-#include "task.h"
 
 /* USER CODE END Includes */
 

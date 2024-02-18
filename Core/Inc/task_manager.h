@@ -1,5 +1,5 @@
-#ifndef INC_TASK_H_
-#define INC_TASK_H_
+#ifndef INC_TASK_MANAGER_H_
+#define INC_TASK_MANAGER_H_
 
 #include "main.h"
 
@@ -13,4 +13,4 @@ void manage_tasks();
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim);
 
-#endif /* INC_TASK_H_ */
+#endif /* INC_TASK_MANAGER_H_ */
