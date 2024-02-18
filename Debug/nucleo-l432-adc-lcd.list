@@ -39,13 +39,13 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING, OCTETS
  17 .debug_macro  00024840  00000000  00000000  00040bbd  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_line   0001b402  00000000  00000000  000653fd  2**0
+ 18 .debug_line   0001b400  00000000  00000000  000653fd  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .debug_str    000ded2b  00000000  00000000  000807ff  2**0
+ 19 .debug_str    000ded2b  00000000  00000000  000807fd  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 20 .debug_frame  00006228  00000000  00000000  0015f52c  2**2
+ 20 .debug_frame  00006228  00000000  00000000  0015f528  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 21 .debug_line_str 0000006b  00000000  00000000  00165754  2**0
+ 21 .debug_line_str 0000006b  00000000  00000000  00165750  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -764,9 +764,6 @@ void display_graph() {
  800080c:	4628      	mov	r0, r5
  800080e:	f000 fd7e 	bl	800130e <ili9341_draw_line>
     }
-//    char message[100];
-//    sprintf(message, "%lu: %d\r\n", time_buffer[draw_index], raw_values[draw_index]);
-//    bt_send(message);
     draw_index++;
  8000812:	4b1e      	ldr	r3, [pc, #120]	; (800088c <display_graph+0x158>)
  8000814:	881b      	ldrh	r3, [r3, #0]
@@ -874,9 +871,6 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
  80008de:	4603      	mov	r3, r0
  80008e0:	4a09      	ldr	r2, [pc, #36]	; (8000908 <HAL_TIM_PeriodElapsedCallback+0x58>)
  80008e2:	f842 3024 	str.w	r3, [r2, r4, lsl #2]
-//  char message[40];
-//  sprintf(message, "%d\r\n", raw_values[fill_index]);
-//  printToUart(uart_hal, message);
   fill_index++;
  80008e6:	4b05      	ldr	r3, [pc, #20]	; (80008fc <HAL_TIM_PeriodElapsedCallback+0x4c>)
  80008e8:	881b      	ldrh	r3, [r3, #0]

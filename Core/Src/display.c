@@ -85,9 +85,6 @@ void display_graph() {
     else {
       ili9341_draw_line(ili9341_lcd, ILI9341_LIGHTGREY, x - 1, translate_y(raw_values[draw_index - 1]), x, translate_y(raw_values[draw_index]));
     }
-//    char message[100];
-//    sprintf(message, "%lu: %d\r\n", time_buffer[draw_index], raw_values[draw_index]);
-//    bt_send(message);
     draw_index++;
   }
   else if (fill_index == BUFFER_SIZE && !data_sent) {
@@ -107,9 +104,6 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
   }
   raw_values[fill_index] = dma_values[0];
   time_buffer[fill_index] = HAL_GetTick();
-//  char message[40];
-//  sprintf(message, "%d\r\n", raw_values[fill_index]);
-//  printToUart(uart_hal, message);
   fill_index++;
 }
 
