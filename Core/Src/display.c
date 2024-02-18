@@ -16,6 +16,8 @@ uint16_t dma_values[0];
 
 uint16_t raw_values[BUFFER_SIZE];
 
+uint16_t time_buffer[BUFFER_SIZE];
+
 uint16_t fill_index = 0;
 
 uint16_t draw_index = 0;
@@ -83,9 +85,10 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
     return;
   }
   raw_values[fill_index] = dma_values[0];
-  char message[40];
-  sprintf(message, "%d\r\n", raw_values[fill_index]);
-  printToUart(uart_hal, message);
+  time_buffer[fill_index] = HAL_GetTick();
+//  char message[40];
+//  sprintf(message, "%d\r\n", raw_values[fill_index]);
+//  printToUart(uart_hal, message);
   fill_index++;
 }
 
