@@ -7,7 +7,8 @@ void init_tasks(
     SPI_HandleTypeDef* spi,
     TIM_HandleTypeDef* timer,
     ADC_HandleTypeDef* adc,
-    UART_HandleTypeDef* uart);
+    UART_HandleTypeDef* uart,
+    UART_HandleTypeDef* uart_bt);
 
 void manage_tasks();
 

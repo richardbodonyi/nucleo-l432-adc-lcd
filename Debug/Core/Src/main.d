@@ -34,9 +34,10 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_tim_ex.h \
  ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_uart.h \
  ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_uart_ex.h \
- ../Core/Inc/ili9341_gfx.h ../Core/Inc/ili9341.h \
+ ../Core/Inc/task_manager.h ../Core/Inc/main.h ../Core/Inc/ili9341_gfx.h \
+ ../Core/Inc/ili9341.h \
  ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_def.h \
- ../Core/Inc/ili9341_font.h ../Core/Inc/task.h ../Core/Inc/main.h
+ ../Core/Inc/ili9341_font.h
 ../Core/Inc/main.h:
 ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal.h:
 ../Core/Inc/stm32l4xx_hal_conf.h:
@@ -73,9 +74,9 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_tim_ex.h:
 ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_uart.h:
 ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_uart_ex.h:
+../Core/Inc/task_manager.h:
+../Core/Inc/main.h:
 ../Core/Inc/ili9341_gfx.h:
 ../Core/Inc/ili9341.h:
 ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_def.h:
 ../Core/Inc/ili9341_font.h:
-../Core/Inc/task.h:
-../Core/Inc/main.h:

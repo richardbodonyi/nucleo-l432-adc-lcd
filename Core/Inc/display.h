@@ -5,7 +5,8 @@
 void init_display(SPI_HandleTypeDef* spi,
     TIM_HandleTypeDef* timer,
     ADC_HandleTypeDef* adc,
-    UART_HandleTypeDef* uart);
+    UART_HandleTypeDef* uart,
+    UART_HandleTypeDef* uart_bt);
 
 void display_graph();
 
