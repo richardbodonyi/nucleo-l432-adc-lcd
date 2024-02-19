@@ -6,7 +6,7 @@
 #include "display.h"
 #include "bt.h"
 
-#define BUFFER_SIZE 2500
+#define BUFFER_SIZE 2000
 
 TIM_HandleTypeDef* timer_hal;
 
@@ -26,7 +26,7 @@ uint16_t draw_index = 0;
 
 uint16_t min_y = 3650;
 
-uint16_t max_y = 4095;
+uint16_t max_y = 3900;
 
 bool data_sent = false;
 
@@ -40,7 +40,7 @@ void init_display(SPI_HandleTypeDef* spi,
 
   init_bt(uart_bt);
   bt_send("max voltage: 3300\r\n");
-  bt_send("data rate: 120\r\n");
+  bt_send("data rate: 250\r\n");
 
   ili9341_lcd = ili9341_new(
           spi,
