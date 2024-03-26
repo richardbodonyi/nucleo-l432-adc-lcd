@@ -63,6 +63,8 @@ void Error_Handler(void);
 #define VCP_TX_GPIO_Port GPIOA
 #define CS_Pin GPIO_PIN_0
 #define CS_GPIO_Port GPIOB
+#define RESET_Pin GPIO_PIN_1
+#define RESET_GPIO_Port GPIOB
 #define SWDIO_Pin GPIO_PIN_13
 #define SWDIO_GPIO_Port GPIOA
 #define SWCLK_Pin GPIO_PIN_14
@@ -73,8 +75,6 @@ void Error_Handler(void);
 #define LED_GPIO_Port GPIOB
 #define DC_Pin GPIO_PIN_6
 #define DC_GPIO_Port GPIOB
-#define RESET_Pin GPIO_PIN_7
-#define RESET_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 
@@ -86,7 +86,7 @@ void Error_Handler(void);
 #define SPI1_TFT_MOSI_GPIO_Port GPIOA
 #define TFT_DC_Pin GPIO_PIN_6
 #define TFT_DC_GPIO_Port GPIOB
-#define TFT_RESET_Pin GPIO_PIN_7
+#define TFT_RESET_Pin GPIO_PIN_1
 #define TFT_RESET_GPIO_Port GPIOB
 
 #define TOUCH_IRQ_Pin GPIO_PIN_6
