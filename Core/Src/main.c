@@ -295,7 +295,7 @@ static void MX_LPTIM1_Init(void)
 {
 
   /* USER CODE BEGIN LPTIM1_Init 0 */
-
+  LL_LPTIM_Disable(LPTIM1);
   /* USER CODE END LPTIM1_Init 0 */
 
   /* USER CODE BEGIN LPTIM1_Init 1 */
@@ -317,6 +317,39 @@ static void MX_LPTIM1_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN LPTIM1_Init 2 */
+
+  /*
+   * To activate the Encoder mode the ENC bit has to be set to â€?1â€™. The LPTIM must first be
+   * configured in Continuous mode.
+   * When Encoder mode is active, the LPTIM counter is modified automatically following the
+   * speed and the direction of the incremental encoder.
+   */
+  LL_LPTIM_StartCounter(LPTIM1,LL_LPTIM_OPERATING_MODE_CONTINUOUS);
+
+  // This function must be called when the LPTIM instance is disabled.
+  LL_LPTIM_SetEncoderMode(LPTIM1, LL_LPTIM_ENCODER_MODE_RISING/*_FALLING*/);
+
+  /*
+   * This function must be called when the LPTIM instance is disabled.
+   * In this mode the LPTIM instance must be clocked by an internal clock
+   * source. Also, the prescaler division ratio must be equal to 1.
+   * LPTIM instance must be configured in continuous mode prior enabling
+   * the encoder mode.
+   */
+  LL_LPTIM_EnableEncoderMode(LPTIM1);
+
+  LL_LPTIM_Enable(LPTIM1);
+
+  /*
+   * The counter just counts continuously between 0 and the
+   * auto-reload value programmed into the LPTIM_ARR register
+   * (0 up to ARR or ARR down to 0 depending on the direction).
+   * Therefore LPTIM_ARR must be configured before starting
+   */
+  LL_LPTIM_SetAutoReload(LPTIM1, ENCODER_RELOAD);
+
+  //LPTIM instance must be enabled before starting the counter.
+  LL_LPTIM_StartCounter(LPTIM1,LL_LPTIM_OPERATING_MODE_CONTINUOUS);
 
   /* USER CODE END LPTIM1_Init 2 */
 
