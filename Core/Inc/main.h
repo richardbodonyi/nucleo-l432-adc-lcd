@@ -59,8 +59,13 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define Button_Pin GPIO_PIN_0
+#define Button_GPIO_Port GPIOA
+#define Button_EXTI_IRQn EXTI0_IRQn
 #define VCP_TX_Pin GPIO_PIN_2
 #define VCP_TX_GPIO_Port GPIOA
+#define Off_Pin GPIO_PIN_3
+#define Off_GPIO_Port GPIOA
 #define CS_Pin GPIO_PIN_0
 #define CS_GPIO_Port GPIOB
 #define RESET_Pin GPIO_PIN_1
@@ -73,6 +78,8 @@ void Error_Handler(void);
 #define VCP_RX_GPIO_Port GPIOA
 #define LED_Pin GPIO_PIN_3
 #define LED_GPIO_Port GPIOB
+#define Speaker_Pin GPIO_PIN_4
+#define Speaker_GPIO_Port GPIOB
 #define DC_Pin GPIO_PIN_6
 #define DC_GPIO_Port GPIOB
 

@@ -90,6 +90,7 @@ static void MX_LPTIM1_Init(void);
   */
 int main(void)
 {
+
   /* USER CODE BEGIN 1 */
 
   /* USER CODE END 1 */
@@ -319,15 +320,15 @@ static void MX_LPTIM1_Init(void)
   /* USER CODE BEGIN LPTIM1_Init 2 */
 
   /*
-   * To activate the Encoder mode the ENC bit has to be set to �?1’. The LPTIM must first be
+   * To activate the Encoder mode the ENC bit has to be set to �?1’. The LPTIM must first be
    * configured in Continuous mode.
    * When Encoder mode is active, the LPTIM counter is modified automatically following the
    * speed and the direction of the incremental encoder.
    */
-  LL_LPTIM_StartCounter(LPTIM1,LL_LPTIM_OPERATING_MODE_CONTINUOUS);
+//  LL_LPTIM_StartCounter(LPTIM1,LL_LPTIM_OPERATING_MODE_CONTINUOUS);
 
   // This function must be called when the LPTIM instance is disabled.
-  LL_LPTIM_SetEncoderMode(LPTIM1, LL_LPTIM_ENCODER_MODE_RISING/*_FALLING*/);
+//  LL_LPTIM_SetEncoderMode(LPTIM1, LL_LPTIM_ENCODER_MODE_RISING/*_FALLING*/);
 
   /*
    * This function must be called when the LPTIM instance is disabled.
@@ -346,10 +347,10 @@ static void MX_LPTIM1_Init(void)
    * (0 up to ARR or ARR down to 0 depending on the direction).
    * Therefore LPTIM_ARR must be configured before starting
    */
-  LL_LPTIM_SetAutoReload(LPTIM1, ENCODER_RELOAD);
+//  LL_LPTIM_SetAutoReload(LPTIM1, ENCODER_RELOAD);
 
   //LPTIM instance must be enabled before starting the counter.
-  LL_LPTIM_StartCounter(LPTIM1,LL_LPTIM_OPERATING_MODE_CONTINUOUS);
+//  LL_LPTIM_StartCounter(LPTIM1,LL_LPTIM_OPERATING_MODE_CONTINUOUS);
 
   /* USER CODE END LPTIM1_Init 2 */
 
@@ -532,7 +533,24 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, CS_Pin|RESET_Pin|LED_Pin|DC_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(Off_GPIO_Port, Off_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOB, CS_Pin|RESET_Pin|LED_Pin|Speaker_Pin
+                          |DC_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin : Button_Pin */
+  GPIO_InitStruct.Pin = Button_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(Button_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : Off_Pin */
+  GPIO_InitStruct.Pin = Off_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(Off_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : CS_Pin DC_Pin */
   GPIO_InitStruct.Pin = CS_Pin|DC_Pin;
@@ -541,12 +559,16 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : RESET_Pin LED_Pin */
-  GPIO_InitStruct.Pin = RESET_Pin|LED_Pin;
+  /*Configure GPIO pins : RESET_Pin LED_Pin Speaker_Pin */
+  GPIO_InitStruct.Pin = RESET_Pin|LED_Pin|Speaker_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /* EXTI interrupt init*/
+  HAL_NVIC_SetPriority(EXTI0_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(EXTI0_IRQn);
 
 /* USER CODE BEGIN MX_GPIO_Init_2 */
 /* USER CODE END MX_GPIO_Init_2 */
