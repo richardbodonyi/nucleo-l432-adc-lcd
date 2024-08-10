@@ -66,10 +66,16 @@ void Error_Handler(void);
 #define VCP_TX_GPIO_Port GPIOA
 #define Off_Pin GPIO_PIN_3
 #define Off_GPIO_Port GPIOA
+#define LED_CTL_Pin GPIO_PIN_4
+#define LED_CTL_GPIO_Port GPIOA
 #define CS_Pin GPIO_PIN_0
 #define CS_GPIO_Port GPIOB
 #define RESET_Pin GPIO_PIN_1
 #define RESET_GPIO_Port GPIOB
+#define LODP_Pin GPIO_PIN_11
+#define LODP_GPIO_Port GPIOA
+#define LODN_Pin GPIO_PIN_12
+#define LODN_GPIO_Port GPIOA
 #define SWDIO_Pin GPIO_PIN_13
 #define SWDIO_GPIO_Port GPIOA
 #define SWCLK_Pin GPIO_PIN_14
