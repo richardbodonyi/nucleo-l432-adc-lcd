@@ -244,10 +244,10 @@ void HAL_DAC_MspInit(DAC_HandleTypeDef* hdac)
     /**DAC1 GPIO Configuration
     PA4     ------> DAC1_OUT1
     */
-    GPIO_InitStruct.Pin = LED_CTL_Pin;
+    GPIO_InitStruct.Pin = LED_BRGTS_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
-    HAL_GPIO_Init(LED_CTL_GPIO_Port, &GPIO_InitStruct);
+    HAL_GPIO_Init(LED_BRGTS_GPIO_Port, &GPIO_InitStruct);
 
   /* USER CODE BEGIN DAC1_MspInit 1 */
 
@@ -275,7 +275,7 @@ void HAL_DAC_MspDeInit(DAC_HandleTypeDef* hdac)
     /**DAC1 GPIO Configuration
     PA4     ------> DAC1_OUT1
     */
-    HAL_GPIO_DeInit(LED_CTL_GPIO_Port, LED_CTL_Pin);
+    HAL_GPIO_DeInit(LED_BRGTS_GPIO_Port, LED_BRGTS_Pin);
 
   /* USER CODE BEGIN DAC1_MspDeInit 1 */
 
