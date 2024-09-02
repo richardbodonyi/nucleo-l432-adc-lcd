@@ -4,13 +4,13 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include "display.h"
-#include "bt.h"
+// #include "bt.h"
 
 #define BUFFER_SIZE 2000
 
 TIM_HandleTypeDef* timer_hal;
 
-UART_HandleTypeDef* uart_hal;
+// UART_HandleTypeDef* uart_hal;
 
 ili9341_t* ili9341_lcd;
 
@@ -32,15 +32,13 @@ bool data_sent = false;
 
 void init_display(SPI_HandleTypeDef* spi,
     TIM_HandleTypeDef* timer,
-    ADC_HandleTypeDef* adc,
-    UART_HandleTypeDef* uart,
-    UART_HandleTypeDef* uart_bt) {
+    ADC_HandleTypeDef* adc) {
   timer_hal = timer;
-  uart_hal = uart;
+  // uart_hal = uart;
 
-  init_bt(uart_bt);
-  bt_send("max voltage: 3300\r\n");
-  bt_send("data rate: 250\r\n");
+  // init_bt(uart_bt);
+  // bt_send("max voltage: 3300\r\n");
+  // bt_send("data rate: 250\r\n");
 
   ili9341_lcd = ili9341_new(
           spi,
@@ -67,9 +65,9 @@ void init_display(SPI_HandleTypeDef* spi,
 }
 
 
-void printToUart(UART_HandleTypeDef *huart, char *msg) {
-  HAL_UART_Transmit(huart, (uint8_t*) msg, strlen(msg), 100);
-}
+//void printToUart(UART_HandleTypeDef *huart, char *msg) {
+//  HAL_UART_Transmit(huart, (uint8_t*) msg, strlen(msg), 100);
+//}
 
 uint16_t translate_y(uint16_t value) {
   return ili9341_lcd->screen_size.height - 1 - (value - min_y) * (float) ili9341_lcd->screen_size.height / (max_y - min_y);
@@ -91,9 +89,9 @@ void display_graph() {
     char message[100];
     for (int i = 0; i < BUFFER_SIZE; i++) {
       sprintf(message, "%lu: %d\r\n", time_buffer[i], raw_values[i]);
-      bt_send(message);
+      // bt_send(message);
     }
-    bt_send("setting state to 0\r\n");
+    // bt_send("setting state to 0\r\n");
     data_sent = true;
   }
 }

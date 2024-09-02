@@ -4,11 +4,9 @@
 void init_tasks(
     SPI_HandleTypeDef* spi,
     TIM_HandleTypeDef* timer,
-    ADC_HandleTypeDef* adc,
-    UART_HandleTypeDef* uart,
-    UART_HandleTypeDef* uart_bt) {
+    ADC_HandleTypeDef* adc) {
 
-  init_display(spi, timer, adc, uart, uart_bt);
+  init_display(spi, timer, adc);
   HAL_TIM_Base_Start_IT(timer);
 }
 
