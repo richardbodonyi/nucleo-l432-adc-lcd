@@ -4,13 +4,13 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include "display.h"
-// #include "bt.h"
+#include "stm32l4xx_hal_dac.h"
 
 #define BUFFER_SIZE 2000
 
-TIM_HandleTypeDef* timer_hal;
+DAC_HandleTypeDef* hdac_hal;
 
-// UART_HandleTypeDef* uart_hal;
+TIM_HandleTypeDef* timer_hal;
 
 ili9341_t* ili9341_lcd;
 
@@ -28,18 +28,20 @@ uint16_t min_y = 3650;
 
 uint16_t max_y = 3900;
 
-bool data_sent = false;
+uint8_t lcd_brightness = 130;
+
+bool active = false;
+
+const uint8_t MIN_BRIGHTNESS = 80, MAX_BRIGHTNESS = 250, BRIGHTNESS_STEP = 10;
 
 void init_display(SPI_HandleTypeDef* spi,
     TIM_HandleTypeDef* timer,
-    ADC_HandleTypeDef* adc) {
+    ADC_HandleTypeDef* adc,
+	DAC_HandleTypeDef* hdac) {
+  hdac_hal = hdac;
+  HAL_DAC_Start(hdac_hal, DAC_CHANNEL_1);
+  HAL_DAC_SetValue(hdac_hal, DAC_CHANNEL_1, DAC_ALIGN_8B_R, lcd_brightness);
   timer_hal = timer;
-  // uart_hal = uart;
-
-  // init_bt(uart_bt);
-  // bt_send("max voltage: 3300\r\n");
-  // bt_send("data rate: 250\r\n");
-
   ili9341_lcd = ili9341_new(
           spi,
           TFT_RESET_GPIO_Port, TFT_RESET_Pin,
@@ -65,16 +67,13 @@ void init_display(SPI_HandleTypeDef* spi,
 }
 
 
-//void printToUart(UART_HandleTypeDef *huart, char *msg) {
-//  HAL_UART_Transmit(huart, (uint8_t*) msg, strlen(msg), 100);
-//}
-
 uint16_t translate_y(uint16_t value) {
   return ili9341_lcd->screen_size.height - 1 - (value - min_y) * (float) ili9341_lcd->screen_size.height / (max_y - min_y);
 }
 
 void display_graph() {
   if (fill_index > draw_index) {
+    active = true;
     int x = draw_index % ili9341_lcd->screen_size.width;
     ili9341_draw_line(ili9341_lcd, ILI9341_BLACK, x, 0, x, ili9341_lcd->screen_size.height - 1);
     if (x == 0) {
@@ -85,15 +84,31 @@ void display_graph() {
     }
     draw_index++;
   }
-  else if (fill_index == BUFFER_SIZE && !data_sent) {
-    char message[100];
-    for (int i = 0; i < BUFFER_SIZE; i++) {
-      sprintf(message, "%lu: %d\r\n", time_buffer[i], raw_values[i]);
-      // bt_send(message);
-    }
-    // bt_send("setting state to 0\r\n");
-    data_sent = true;
+  else if (fill_index == BUFFER_SIZE && active) {
+	  shutdown();
   }
+}
+
+void reset_values() {
+	fill_index = 0;
+	draw_index = 0;
+	active = false;
+}
+
+void increase_brightness() {
+	lcd_brightness += BRIGHTNESS_STEP;
+	if (lcd_brightness > MAX_BRIGHTNESS) {
+		lcd_brightness = MAX_BRIGHTNESS;
+	}
+	HAL_DAC_SetValue(hdac_hal, DAC_CHANNEL_1, DAC_ALIGN_8B_R, lcd_brightness);
+}
+
+void decrease_brightness() {
+	lcd_brightness -= BRIGHTNESS_STEP;
+	if (lcd_brightness < MIN_BRIGHTNESS) {
+		lcd_brightness = MIN_BRIGHTNESS;
+	}
+	HAL_DAC_SetValue(hdac_hal, DAC_CHANNEL_1, DAC_ALIGN_8B_R, lcd_brightness);
 }
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {

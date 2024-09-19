@@ -6,7 +6,8 @@
 void init_tasks(
     SPI_HandleTypeDef* spi,
     TIM_HandleTypeDef* timer,
-    ADC_HandleTypeDef* adc);
+    ADC_HandleTypeDef* adc,
+	DAC_HandleTypeDef* hdac);
 
 void manage_tasks();
 

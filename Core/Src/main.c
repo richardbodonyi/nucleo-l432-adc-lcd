@@ -27,6 +27,7 @@
 #include "task_manager.h"
 #include "ili9341_gfx.h"
 #include "stm32l4xx_ll_lptim.h"
+#include "ad_header.h"
 
 /* USER CODE END Includes */
 
@@ -81,6 +82,10 @@ static void MX_DAC1_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
+void shutdown() {
+	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_3, GPIO_PIN_RESET);
+}
+
 /* USER CODE END 0 */
 
 /**
@@ -121,20 +126,16 @@ int main(void)
   MX_DAC1_Init();
   /* USER CODE BEGIN 2 */
 
-  HAL_DAC_Start(&hdac1, DAC_CHANNEL_1);
-  HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_1, DAC_ALIGN_8B_R, 128);
+  enableAD();
 
-
-  init_tasks(&hspi1, &htim16, &hadc1);
+  init_tasks(&hspi1, &htim16, &hadc1, &hdac1);
 
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  // HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);
   while (1) {
-	// DAC1->DHR12R1 = 4000;
-    manage_tasks();
+	manage_tasks();
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -510,11 +511,14 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, Off_Pin|SDN_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(Off_GPIO_Port, Off_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, CS_Pin|RESET_Pin|LED_Pin|Speaker_Pin
                           |DC_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(SDN_GPIO_Port, SDN_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pins : BUTTON_Pin LODP_Pin LODN_Pin */
   GPIO_InitStruct.Pin = BUTTON_Pin|LODP_Pin|LODN_Pin;
@@ -533,7 +537,7 @@ static void MX_GPIO_Init(void)
   /*Configure GPIO pins : Off_Pin SDN_Pin */
   GPIO_InitStruct.Pin = Off_Pin|SDN_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
@@ -565,10 +569,6 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 4 */
 
-//void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
-//  if(huart->Instance == huart1.Instance) {
-//  }
-//}
 
 /* USER CODE END 4 */
 
