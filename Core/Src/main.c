@@ -27,7 +27,6 @@
 #include "task_manager.h"
 #include "ili9341_gfx.h"
 #include "stm32l4xx_ll_lptim.h"
-#include "ad_header.h"
 
 /* USER CODE END Includes */
 
@@ -125,8 +124,6 @@ int main(void)
   MX_LPTIM1_Init();
   MX_DAC1_Init();
   /* USER CODE BEGIN 2 */
-
-  enableAD();
 
   init_tasks(&hspi1, &htim16, &hadc1, &hdac1);
 

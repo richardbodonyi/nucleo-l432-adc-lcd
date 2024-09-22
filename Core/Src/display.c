@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include "display.h"
+#include "ad_header.h"
 #include "stm32l4xx_hal_dac.h"
 
 #define BUFFER_SIZE 2000
@@ -62,10 +63,10 @@ void init_display(SPI_HandleTypeDef* spi,
   attr.origin_x = 120;
   attr.origin_y = 100;
   ili9341_draw_string(ili9341_lcd, attr, "ECG");
+  enableAD();
 
   HAL_ADC_Start_DMA(adc, (uint32_t*) dma_values, 1);
 }
-
 
 uint16_t translate_y(uint16_t value) {
   return ili9341_lcd->screen_size.height - 1 - (value - min_y) * (float) ili9341_lcd->screen_size.height / (max_y - min_y);
@@ -85,11 +86,12 @@ void display_graph() {
     draw_index++;
   }
   else if (fill_index == BUFFER_SIZE && active) {
-	  shutdown();
+	  // shutdown();
   }
 }
 
 void reset_values() {
+	disableAD();
 	fill_index = 0;
 	draw_index = 0;
 	active = false;
