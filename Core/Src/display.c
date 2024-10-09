@@ -86,7 +86,9 @@ void display_graph() {
     draw_index++;
   }
   else if (fill_index == BUFFER_SIZE && active) {
-	  // shutdown();
+	  fill_index = 0;
+	  draw_index = 0;
+    // shutdown();
   }
 }
 
@@ -121,5 +123,3 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
   time_buffer[fill_index] = HAL_GetTick();
   fill_index++;
 }
-
-
