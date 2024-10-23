@@ -25,9 +25,9 @@ uint16_t fill_index = 0;
 
 uint16_t draw_index = 0;
 
-uint16_t min_y = 3650;
+uint16_t min_y = 650;
 
-uint16_t max_y = 3900;
+uint16_t max_y = 4000;
 
 uint8_t lcd_brightness = 130;
 
