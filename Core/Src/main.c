@@ -375,7 +375,7 @@ static void MX_LPTIM1_Init(void)
    * When Encoder mode is active, the LPTIM counter is modified automatically following the
    * speed and the direction of the incremental encoder.
    */
-//  LL_LPTIM_StartCounter(LPTIM1,LL_LPTIM_OPERATING_MODE_CONTINUOUS);
+//  LL_LPTIM_StartCounter(LPTIM1, LL_LPTIM_OPERATING_MODE_CONTINUOUS);
 
   // This function must be called when the LPTIM instance is disabled.
 //  LL_LPTIM_SetEncoderMode(LPTIM1, LL_LPTIM_ENCODER_MODE_RISING/*_FALLING*/);
@@ -397,10 +397,10 @@ static void MX_LPTIM1_Init(void)
    * (0 up to ARR or ARR down to 0 depending on the direction).
    * Therefore LPTIM_ARR must be configured before starting
    */
-//  LL_LPTIM_SetAutoReload(LPTIM1, ENCODER_RELOAD);
+//  LL_LPTIM_SetAutoReload(LPTIM1, 0xFFFF);
 
   //LPTIM instance must be enabled before starting the counter.
-//  LL_LPTIM_StartCounter(LPTIM1,LL_LPTIM_OPERATING_MODE_CONTINUOUS);
+//  LL_LPTIM_StartCounter(LPTIM1, LL_LPTIM_OPERATING_MODE_CONTINUOUS);
 
   /* USER CODE END LPTIM1_Init 2 */
 
