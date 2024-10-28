@@ -14,3 +14,7 @@ void init_tasks(
 void manage_tasks() {
   display_graph();
 }
+
+void task_handle_interrupt(uint8_t interrupt_event) {
+  display_handle_interrupt(interrupt_event);
+}

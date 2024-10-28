@@ -1,7 +1,12 @@
 #ifndef INC_TASK_MANAGER_H_
 #define INC_TASK_MANAGER_H_
 
-#include "main.h"
+#include "stm32l4xx_hal.h"
+
+#define BUTTON_PRESS 0
+#define RIGHT_TURN 1
+#define LEFT_TURN 2
+#define BUTTON_HOLD 3
 
 void init_tasks(
     SPI_HandleTypeDef* spi,
@@ -10,6 +15,8 @@ void init_tasks(
 	DAC_HandleTypeDef* hdac);
 
 void manage_tasks();
+
+void task_handle_interrupt(uint8_t interrupt_event);
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim);
 

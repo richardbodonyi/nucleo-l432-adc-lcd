@@ -17,4 +17,6 @@ void increase_brightness();
 
 void decrease_brightness();
 
+void display_handle_interrupt(uint8_t interrupt);
+
 #endif /* INC_DISPLAY_H_ */

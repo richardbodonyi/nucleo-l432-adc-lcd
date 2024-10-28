@@ -32,6 +32,8 @@ extern "C" {
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
+#include "task_manager.h"
+
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -54,13 +56,16 @@ void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
 
-void shutdown();
+void handle_interrupt(uint8_t interrupt_event);
+
+//void shutdown();
 
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
 #define BUTTON_Pin GPIO_PIN_0
 #define BUTTON_GPIO_Port GPIOA
+#define BUTTON_EXTI_IRQn EXTI0_IRQn
 #define VCP_TX_Pin GPIO_PIN_2
 #define VCP_TX_GPIO_Port GPIOA
 #define Off_Pin GPIO_PIN_3
@@ -85,8 +90,12 @@ void shutdown();
 #define LED_GPIO_Port GPIOB
 #define Speaker_Pin GPIO_PIN_4
 #define Speaker_GPIO_Port GPIOB
+#define REnc1_Pin GPIO_PIN_5
+#define REnc1_GPIO_Port GPIOB
 #define DC_Pin GPIO_PIN_6
 #define DC_GPIO_Port GPIOB
+#define REnc2_Pin GPIO_PIN_7
+#define REnc2_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 

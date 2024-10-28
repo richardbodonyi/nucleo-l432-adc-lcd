@@ -7,7 +7,20 @@
 #include "ad_header.h"
 #include "stm32l4xx_hal_dac.h"
 
+#define VERSION "1.0"
+
 #define BUFFER_SIZE 2000
+
+char* MENU_TEXTS[] = {"Szunet", "Meres hossza", "Fenyero", "Hang", "Vissza"};
+
+typedef enum {
+  MEASURE = 0,
+  MENU
+} T_Mode;
+
+typedef struct {
+  uint8_t selected;
+} T_Menu;
 
 DAC_HandleTypeDef* hdac_hal;
 
@@ -25,13 +38,17 @@ uint16_t fill_index = 0;
 
 uint16_t draw_index = 0;
 
-uint16_t min_y = 650;
+uint16_t min_y = 0;
 
-uint16_t max_y = 4000;
+uint16_t max_y = 5000;
 
 uint8_t lcd_brightness = 130;
 
-bool active = false;
+bool active = false, enabled = true;
+
+T_Mode mode = MEASURE;
+
+T_Menu menu;
 
 const uint8_t MIN_BRIGHTNESS = 80, MAX_BRIGHTNESS = 250, BRIGHTNESS_STEP = 10;
 
@@ -60,9 +77,13 @@ void init_display(SPI_HandleTypeDef* spi,
   attr.bg_color = ILI9341_BLACK;
   attr.fg_color = ILI9341_LIGHTGREY;
   attr.font = &ili9341_font_16x26;
-  attr.origin_x = 120;
+  attr.origin_x = 60;
   attr.origin_y = 100;
-  ili9341_draw_string(ili9341_lcd, attr, "ECG");
+  ili9341_draw_string(ili9341_lcd, attr, "EKG MONITOR");
+  attr.font = &ili9341_font_11x18;
+  attr.origin_x = 120;
+  attr.origin_y = 150;
+  ili9341_draw_string(ili9341_lcd, attr, VERSION);
   enableAD();
 
   HAL_ADC_Start_DMA(adc, (uint32_t*) dma_values, 1);
@@ -72,23 +93,52 @@ uint16_t translate_y(uint16_t value) {
   return ili9341_lcd->screen_size.height - 1 - (value - min_y) * (float) ili9341_lcd->screen_size.height / (max_y - min_y);
 }
 
-void display_graph() {
-  if (fill_index > draw_index) {
-    active = true;
-    int x = draw_index % ili9341_lcd->screen_size.width;
-    ili9341_draw_line(ili9341_lcd, ILI9341_BLACK, x, 0, x, ili9341_lcd->screen_size.height - 1);
-    if (x == 0) {
-      ili9341_draw_pixel(ili9341_lcd, ILI9341_LIGHTGREY, x, translate_y(raw_values[draw_index]));
-    }
-    else {
-      ili9341_draw_line(ili9341_lcd, ILI9341_LIGHTGREY, x - 1, translate_y(raw_values[draw_index - 1]), x, translate_y(raw_values[draw_index]));
-    }
-    draw_index++;
+void draw_menu() {
+  uint8_t x = 10, y = 10;
+  for (uint8_t i = 0; i < sizeof(MENU_TEXTS); i++) {
+    ili9341_text_attr_t attr;
+    attr.bg_color = menu.selected == i ? ILI9341_BLUE : ILI9341_DARKGREY;
+    attr.fg_color = ILI9341_LIGHTGREY;
+    attr.font = &ili9341_font_11x18;
+    attr.origin_x = x;
+    attr.origin_y = y + i * 18;
+    ili9341_draw_string(ili9341_lcd, attr, MENU_TEXTS[i]);
   }
-  else if (fill_index == BUFFER_SIZE && active) {
-	  fill_index = 0;
-	  draw_index = 0;
-    // shutdown();
+}
+
+void display_graph() {
+  if (enabled) {
+    if (fill_index > draw_index) {
+      active = true;
+      int x = draw_index % ili9341_lcd->screen_size.width;
+      ili9341_draw_line(ili9341_lcd, ILI9341_BLACK, x, 0, x, ili9341_lcd->screen_size.height - 1);
+      if (x == 0) {
+        ili9341_draw_pixel(ili9341_lcd, ILI9341_LIGHTGREY, x, translate_y(raw_values[draw_index]));
+      }
+      else {
+        ili9341_draw_line(ili9341_lcd, ILI9341_LIGHTGREY, x - 1, translate_y(raw_values[draw_index - 1]), x, translate_y(raw_values[draw_index]));
+      }
+      draw_index++;
+    }
+    else if (fill_index == BUFFER_SIZE && active) {
+      fill_index = 0;
+      draw_index = 0;
+      // shutdown();
+    }
+    if (mode == MENU) {
+      draw_menu();
+    }
+  }
+  else {
+    disableAD();
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_3, GPIO_PIN_RESET);
+    ili9341_text_attr_t attr;
+    attr.bg_color = ILI9341_BLACK;
+    attr.fg_color = ILI9341_LIGHTGREY;
+    attr.font = &ili9341_font_16x26;
+    attr.origin_x = 100;
+    attr.origin_y = 100;
+    ili9341_draw_string(ili9341_lcd, attr, "SHUTDOWN");
   }
 }
 
@@ -115,11 +165,37 @@ void decrease_brightness() {
 	HAL_DAC_SetValue(hdac_hal, DAC_CHANNEL_1, DAC_ALIGN_8B_R, lcd_brightness);
 }
 
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
-  if (fill_index >= BUFFER_SIZE) {
-    return;
+void display_handle_interrupt(uint8_t interrupt) {
+  if (mode == MEASURE) {
+    mode = MENU;
   }
-  raw_values[fill_index] = dma_values[0];
-  time_buffer[fill_index] = HAL_GetTick();
-  fill_index++;
+  else {
+    if (menu.selected == sizeof(MENU_TEXTS) - 1) {
+      mode = MEASURE;
+    }
+  }
+}
+
+void display_shutdown() {
+  enabled = false;
+}
+
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
+  if (htim->Instance == TIM16) {
+    if (enabled) {
+      if (fill_index >= BUFFER_SIZE) {
+        return;
+      }
+      raw_values[fill_index] = dma_values[0];
+      time_buffer[fill_index] = HAL_GetTick();
+      fill_index++;
+    }
+    else {
+      HAL_TIM_Base_Stop_IT(htim);
+    }
+  }
+  else if (htim->Instance == TIM7) {
+    HAL_TIM_Base_Stop_IT(htim);
+    display_shutdown();
+  }
 }
