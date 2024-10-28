@@ -94,8 +94,9 @@ uint16_t translate_y(uint16_t value) {
 }
 
 void draw_menu() {
+  // return;
   uint8_t x = 10, y = 10;
-  for (uint8_t i = 0; i < sizeof(MENU_TEXTS); i++) {
+  for (uint8_t i = 0; i < 5; i++) {
     ili9341_text_attr_t attr;
     attr.bg_color = menu.selected == i ? ILI9341_BLUE : ILI9341_DARKGREY;
     attr.fg_color = ILI9341_LIGHTGREY;
@@ -165,7 +166,7 @@ void decrease_brightness() {
 	HAL_DAC_SetValue(hdac_hal, DAC_CHANNEL_1, DAC_ALIGN_8B_R, lcd_brightness);
 }
 
-void display_handle_interrupt(uint8_t interrupt) {
+void button_press() {
   if (mode == MEASURE) {
     mode = MENU;
   }
@@ -173,6 +174,38 @@ void display_handle_interrupt(uint8_t interrupt) {
     if (menu.selected == sizeof(MENU_TEXTS) - 1) {
       mode = MEASURE;
     }
+  }
+}
+
+void button_turned_right() {
+//  enabled = false;
+  if (mode == MENU) {
+    menu.selected++;
+//    if (menu.selected >= 5) {
+//      menu.selected = 4;
+//    }
+  }
+}
+
+void button_turned_left() {
+  if (mode == MENU) {
+    if (menu.selected > 0) {
+      menu.selected--;
+    }
+//    else {
+//      menu.selected = 0;
+//    }
+  }
+}
+
+void display_handle_interrupt(uint8_t interrupt) {
+  switch (interrupt) {
+    case BUTTON_PRESS: button_press();
+      break;
+    case RIGHT_TURN: button_turned_right();
+      break;
+    case LEFT_TURN: button_turned_left();
+      break;
   }
 }
 

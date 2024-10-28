@@ -56,6 +56,7 @@
 
 /* External variables --------------------------------------------------------*/
 extern DMA_HandleTypeDef hdma_adc1;
+extern LPTIM_HandleTypeDef hlptim1;
 extern DMA_HandleTypeDef hdma_spi1_tx;
 extern TIM_HandleTypeDef htim7;
 extern TIM_HandleTypeDef htim16;
@@ -279,6 +280,27 @@ void TIM7_IRQHandler(void)
   /* USER CODE BEGIN TIM7_IRQn 1 */
 
   /* USER CODE END TIM7_IRQn 1 */
+}
+
+/**
+  * @brief This function handles LPTIM1 global interrupt.
+  */
+void LPTIM1_IRQHandler(void)
+{
+  /* USER CODE BEGIN LPTIM1_IRQn 0 */
+  // HAL_LPTIM_StateTypeDef state = HAL_LPTIM_GetState(hlptim1);
+  if (hlptim1.Instance->ISR & LPTIM_FLAG_DOWN) {
+    task_handle_interrupt(LEFT_TURN);
+  }
+  else if (hlptim1.Instance->ISR & LPTIM_FLAG_UP) {
+    task_handle_interrupt(RIGHT_TURN);
+  }
+
+  /* USER CODE END LPTIM1_IRQn 0 */
+  HAL_LPTIM_IRQHandler(&hlptim1);
+  /* USER CODE BEGIN LPTIM1_IRQn 1 */
+
+  /* USER CODE END LPTIM1_IRQn 1 */
 }
 
 /* USER CODE BEGIN 1 */

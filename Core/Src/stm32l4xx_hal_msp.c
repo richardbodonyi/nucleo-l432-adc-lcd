@@ -328,6 +328,9 @@ void HAL_LPTIM_MspInit(LPTIM_HandleTypeDef* hlptim)
     GPIO_InitStruct.Alternate = GPIO_AF1_LPTIM1;
     HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
+    /* LPTIM1 interrupt Init */
+    HAL_NVIC_SetPriority(LPTIM1_IRQn, 0, 0);
+    HAL_NVIC_EnableIRQ(LPTIM1_IRQn);
   /* USER CODE BEGIN LPTIM1_MspInit 1 */
 
   /* USER CODE END LPTIM1_MspInit 1 */
@@ -358,6 +361,8 @@ void HAL_LPTIM_MspDeInit(LPTIM_HandleTypeDef* hlptim)
     */
     HAL_GPIO_DeInit(GPIOB, REnc1_Pin|REnc2_Pin);
 
+    /* LPTIM1 interrupt DeInit */
+    HAL_NVIC_DisableIRQ(LPTIM1_IRQn);
   /* USER CODE BEGIN LPTIM1_MspDeInit 1 */
 
   /* USER CODE END LPTIM1_MspDeInit 1 */

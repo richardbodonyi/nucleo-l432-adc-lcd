@@ -130,6 +130,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   init_tasks(&hspi1, &htim16, &hadc1, &hdac1);
+  HAL_LPTIM_Encoder_Start_IT(&hlptim1, 0xFFFF);
 
   /* USER CODE END 2 */
 

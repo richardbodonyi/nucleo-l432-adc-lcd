@@ -6,7 +6,6 @@
 #define BUTTON_PRESS 0
 #define RIGHT_TURN 1
 #define LEFT_TURN 2
-#define BUTTON_HOLD 3
 
 void init_tasks(
     SPI_HandleTypeDef* spi,
