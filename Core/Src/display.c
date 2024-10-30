@@ -11,7 +11,9 @@
 
 #define BUFFER_SIZE 2000
 
-char* MENU_TEXTS[] = {"Szunet", "Vissza"};
+#define MENU_SIZE 3
+
+char* MENU_TEXTS[] = {"Szunet", "Hang", "Vissza"};
 
 typedef enum {
   MEASURE = 0,
@@ -51,6 +53,8 @@ T_Mode mode = MEASURE;
 T_Menu menu;
 
 const uint8_t MIN_BRIGHTNESS = 80, MAX_BRIGHTNESS = 250, BRIGHTNESS_STEP = 10;
+
+uint16_t debug_line_y = 100;
 
 void init_display(SPI_HandleTypeDef* spi,
     TIM_HandleTypeDef* timer,
@@ -96,7 +100,7 @@ uint16_t translate_y(uint16_t value) {
 void draw_menu() {
   // return;
   uint8_t x = 10, y = 10;
-  for (uint8_t i = 0; i < 2; i++) {
+  for (uint8_t i = 0; i < MENU_SIZE; i++) {
     ili9341_text_attr_t attr;
     attr.bg_color = menu.selected == i ? ILI9341_BLUE : ILI9341_DARKGREY;
     attr.fg_color = ILI9341_LIGHTGREY;
@@ -115,12 +119,14 @@ void display_graph() {
       ili9341_draw_line(ili9341_lcd, ILI9341_BLACK, x, 0, x, ili9341_lcd->screen_size.height - 1);
       if (x == 0) {
         ili9341_draw_pixel(ili9341_lcd, ILI9341_LIGHTGREY, x, translate_y(raw_values[draw_index]));
+        ili9341_draw_pixel(ili9341_lcd, ILI9341_LIGHTGREY, x, translate_y(raw_values[draw_index]));
       }
       else {
         ili9341_draw_line(ili9341_lcd, ILI9341_LIGHTGREY, x - 1, translate_y(raw_values[draw_index - 1]), x, translate_y(raw_values[draw_index]));
       }
       draw_index++;
     }
+    ili9341_draw_line(ili9341_lcd, ILI9341_CYAN, 0, debug_line_y, 319, debug_line_y);
     if (fill_index == BUFFER_SIZE && active) {
       fill_index = 0;
       draw_index = 0;
@@ -171,7 +177,7 @@ void button_press() {
     mode = MENU;
   }
   else {
-    if (menu.selected == 1) {
+    if (menu.selected == MENU_SIZE - 1) {
       mode = MEASURE;
     }
   }
@@ -181,9 +187,12 @@ void button_turned_right() {
 //  enabled = false;
   if (mode == MENU) {
     menu.selected++;
-    if (menu.selected >= 2) {
-      menu.selected = 1;
+    if (menu.selected >= MENU_SIZE) {
+      menu.selected = MENU_SIZE - 1;
     }
+  }
+  else {
+    debug_line_y++;
   }
 }
 
@@ -195,6 +204,9 @@ void button_turned_left() {
     else {
       menu.selected = 0;
     }
+  }
+  else {
+    debug_line_y--;
   }
 }
 

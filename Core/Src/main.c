@@ -130,7 +130,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   init_tasks(&hspi1, &htim16, &hadc1, &hdac1);
-  HAL_LPTIM_Encoder_Start_IT(&hlptim1, 0xFFFF);
+//  HAL_LPTIM_Encoder_Start_IT(&hlptim1, 0xffff);
 
   /* USER CODE END 2 */
 
@@ -346,7 +346,7 @@ static void MX_LPTIM1_Init(void)
 {
 
   /* USER CODE BEGIN LPTIM1_Init 0 */
-  // LL_LPTIM_Disable(LPTIM1);
+//  LL_LPTIM_Disable(LPTIM1);
   /* USER CODE END LPTIM1_Init 0 */
 
   /* USER CODE BEGIN LPTIM1_Init 1 */
@@ -355,7 +355,7 @@ static void MX_LPTIM1_Init(void)
   hlptim1.Instance = LPTIM1;
   hlptim1.Init.Clock.Source = LPTIM_CLOCKSOURCE_APBCLOCK_LPOSC;
   hlptim1.Init.Clock.Prescaler = LPTIM_PRESCALER_DIV1;
-  hlptim1.Init.UltraLowPowerClock.Polarity = LPTIM_CLOCKPOLARITY_RISING;
+  hlptim1.Init.UltraLowPowerClock.Polarity = LPTIM_CLOCKPOLARITY_RISING_FALLING;
   hlptim1.Init.UltraLowPowerClock.SampleTime = LPTIM_CLOCKSAMPLETIME_DIRECTTRANSITION;
   hlptim1.Init.Trigger.Source = LPTIM_TRIGSOURCE_SOFTWARE;
   hlptim1.Init.OutputPolarity = LPTIM_OUTPUTPOLARITY_HIGH;
@@ -375,10 +375,10 @@ static void MX_LPTIM1_Init(void)
    * When Encoder mode is active, the LPTIM counter is modified automatically following the
    * speed and the direction of the incremental encoder.
    */
-//  LL_LPTIM_StartCounter(LPTIM1, LL_LPTIM_OPERATING_MODE_CONTINUOUS);
+  LL_LPTIM_StartCounter(LPTIM1, LL_LPTIM_OPERATING_MODE_CONTINUOUS);
 
   // This function must be called when the LPTIM instance is disabled.
-//  LL_LPTIM_SetEncoderMode(LPTIM1, LL_LPTIM_ENCODER_MODE_RISING/*_FALLING*/);
+  LL_LPTIM_SetEncoderMode(LPTIM1, LL_LPTIM_ENCODER_MODE_RISING/*_FALLING*/);
 
   /*
    * This function must be called when the LPTIM instance is disabled.
@@ -397,10 +397,11 @@ static void MX_LPTIM1_Init(void)
    * (0 up to ARR or ARR down to 0 depending on the direction).
    * Therefore LPTIM_ARR must be configured before starting
    */
-//  LL_LPTIM_SetAutoReload(LPTIM1, 0xFFFF);
+  LL_LPTIM_SetAutoReload(LPTIM1, 0xFFFF);
 
   //LPTIM instance must be enabled before starting the counter.
-//  LL_LPTIM_StartCounter(LPTIM1, LL_LPTIM_OPERATING_MODE_CONTINUOUS);
+  LL_LPTIM_StartCounter(LPTIM1, LL_LPTIM_OPERATING_MODE_CONTINUOUS);
+  HAL_LPTIM_Counter_Start_IT(&hlptim1, 0xFFFF);
 
   /* USER CODE END LPTIM1_Init 2 */
 
