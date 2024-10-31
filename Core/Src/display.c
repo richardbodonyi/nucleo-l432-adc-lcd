@@ -11,7 +11,9 @@
 
 #define BUFFER_SIZE 2000
 
-char* MENU_TEXTS[] = {"Szunet", "Vissza"};
+#define MENU_SIZE 3
+
+char* MENU_TEXTS[] = {"Szunet", "Hang", "Vissza"};
 
 typedef enum {
   MEASURE = 0,
@@ -49,6 +51,8 @@ bool active = false, enabled = true;
 T_Mode mode = MEASURE;
 
 T_Menu menu;
+
+uint16_t rotary_position = 0;
 
 const uint8_t MIN_BRIGHTNESS = 80, MAX_BRIGHTNESS = 250, BRIGHTNESS_STEP = 10;
 
@@ -96,7 +100,7 @@ uint16_t translate_y(uint16_t value) {
 void draw_menu() {
   // return;
   uint8_t x = 10, y = 10;
-  for (uint8_t i = 0; i < 2; i++) {
+  for (uint8_t i = 0; i < MENU_SIZE; i++) {
     ili9341_text_attr_t attr;
     attr.bg_color = menu.selected == i ? ILI9341_BLUE : ILI9341_DARKGREY;
     attr.fg_color = ILI9341_LIGHTGREY;
@@ -121,6 +125,7 @@ void display_graph() {
       }
       draw_index++;
     }
+    ili9341_draw_line(ili9341_lcd, ILI9341_CYAN, 0, rotary_position, 99, rotary_position);
     if (fill_index == BUFFER_SIZE && active) {
       fill_index = 0;
       draw_index = 0;
@@ -171,7 +176,7 @@ void button_press() {
     mode = MENU;
   }
   else {
-    if (menu.selected == 1) {
+    if (menu.selected == (MENU_SIZE - 1)) {
       mode = MEASURE;
     }
   }
@@ -181,8 +186,8 @@ void button_turned_right() {
 //  enabled = false;
   if (mode == MENU) {
     menu.selected++;
-    if (menu.selected >= 2) {
-      menu.selected = 1;
+    if (menu.selected >= MENU_SIZE) {
+      menu.selected = MENU_SIZE - 1;
     }
   }
 }
@@ -194,6 +199,18 @@ void button_turned_left() {
     }
     else {
       menu.selected = 0;
+    }
+  }
+}
+
+void display_handle_rotary_change(uint16_t value) {
+  if (rotary_position != value % 239) {
+    rotary_position = value % 239;
+    if (rotary_position < 0) {
+      rotary_position = 0;
+    }
+    else if (rotary_position > 239) {
+      rotary_position = 239;
     }
   }
 }

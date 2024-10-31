@@ -288,13 +288,6 @@ void TIM7_IRQHandler(void)
 void LPTIM1_IRQHandler(void)
 {
   /* USER CODE BEGIN LPTIM1_IRQn 0 */
-  // HAL_LPTIM_StateTypeDef state = HAL_LPTIM_GetState(hlptim1);
-  if (hlptim1.Instance->ISR & LPTIM_FLAG_DOWN) {
-    task_handle_interrupt(LEFT_TURN);
-  }
-  else if (hlptim1.Instance->ISR & LPTIM_FLAG_UP) {
-    task_handle_interrupt(RIGHT_TURN);
-  }
 
   /* USER CODE END LPTIM1_IRQn 0 */
   HAL_LPTIM_IRQHandler(&hlptim1);

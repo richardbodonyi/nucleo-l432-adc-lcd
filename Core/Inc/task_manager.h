@@ -15,6 +15,8 @@ void init_tasks(
 
 void manage_tasks();
 
+void task_handle_rotary_change(uint16_t value);
+
 void task_handle_interrupt(uint8_t interrupt_event);
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim);

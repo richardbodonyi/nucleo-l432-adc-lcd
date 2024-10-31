@@ -130,13 +130,31 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   init_tasks(&hspi1, &htim16, &hadc1, &hdac1);
-  HAL_LPTIM_Encoder_Start_IT(&hlptim1, 0xFFFF);
+
+  /* Start LPTIM Encoder mode */
+  if(HAL_OK != HAL_LPTIM_Encoder_Start_IT(&hlptim1, 0x8000))
+  {
+    Error_Handler();
+  }
 
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1) {
+//    if(__HAL_LPTIM_GET_FLAG(&hlptim1, LPTIM_FLAG_UP)) {
+//      task_handle_interrupt(RIGHT_TURN);
+//      __HAL_LPTIM_CLEAR_FLAG(&hlptim1, LPTIM_FLAG_UP);
+//    }
+//    else {
+//      /* Down counting : set phase of signal 1 to 0 and phase of signal 2 to 90 */
+//      if(__HAL_LPTIM_GET_FLAG(&hlptim1, LPTIM_FLAG_DOWN))
+//      {
+//        task_handle_interrupt(LEFT_TURN);
+//        __HAL_LPTIM_CLEAR_FLAG(&hlptim1, LPTIM_FLAG_DOWN);
+//      }
+//    }
+    task_handle_rotary_change(hlptim1.Instance->CNT);
     manage_tasks();
     /* USER CODE END WHILE */
 
@@ -369,6 +387,33 @@ static void MX_LPTIM1_Init(void)
   }
   /* USER CODE BEGIN LPTIM1_Init 2 */
 
+  // https://community.st.com/t5/stm32-mcus-products/lptim-not-counting-down-in-encoder-mode-always-counts-up-g071/td-p/642341
+
+//  /* Definition of LPTIM1 */
+//
+//  hlptim1.Instance = LPTIM1;
+//  /* reset handle state */
+//  __HAL_LPTIM_RESET_HANDLE_STATE(&hlptim1);
+//
+//  hlptim1.Init.CounterSource                 = LPTIM_COUNTERSOURCE_INTERNAL;
+//  hlptim1.Init.UpdateMode                    = LPTIM_UPDATE_IMMEDIATE;
+//  hlptim1.Init.OutputPolarity                = LPTIM_OUTPUTPOLARITY_HIGH;
+//  hlptim1.Init.Clock.Source                  = LPTIM_CLOCKSOURCE_APBCLOCK_LPOSC;
+//  hlptim1.Init.Clock.Prescaler               = LPTIM_PRESCALER_DIV1;
+//  hlptim1.Init.UltraLowPowerClock.Polarity   = LPTIM_CLOCKPOLARITY_RISING;
+//  hlptim1.Init.UltraLowPowerClock.SampleTime = LPTIM_CLOCKSAMPLETIME_DIRECTTRANSITION;
+//  hlptim1.Init.Trigger.Source                = LPTIM_TRIGSOURCE_SOFTWARE;
+//  hlptim1.Init.Trigger.ActiveEdge            = LPTIM_ACTIVEEDGE_RISING ;
+//  hlptim1.Init.Trigger.SampleTime            = LPTIM_TRIGSAMPLETIME_DIRECTTRANSITION;
+//  hlptim1.Init.Input1Source                  = LPTIM_INPUT1SOURCE_GPIO;
+//  hlptim1.Init.Input2Source                  = LPTIM_INPUT2SOURCE_GPIO;
+//
+//  if(HAL_OK != HAL_LPTIM_Init(&hlptim1))
+//  {
+//  /* Initialization Error */
+//    Error_Handler();
+//  }
+
   /*
    * To activate the Encoder mode the ENC bit has to be set to �?1’. The LPTIM must first be
    * configured in Continuous mode.
@@ -387,9 +432,9 @@ static void MX_LPTIM1_Init(void)
    * LPTIM instance must be configured in continuous mode prior enabling
    * the encoder mode.
    */
-  LL_LPTIM_EnableEncoderMode(LPTIM1);
-
-  LL_LPTIM_Enable(LPTIM1);
+//  LL_LPTIM_EnableEncoderMode(LPTIM1);
+//
+//  LL_LPTIM_Enable(LPTIM1);
 
   /*
    * The counter just counts continuously between 0 and the
