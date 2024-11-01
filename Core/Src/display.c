@@ -11,6 +11,14 @@
 
 #define BUFFER_SIZE 2000
 
+#define MAX_HEIGHT 239
+
+#define RULER_TICK_Y1 200
+#define SEC_RULER_TICK_Y2 210
+#define HALF_SEC_RULER_TICK_Y2 205
+#define SEC_MOD 250
+#define HALF_SEC_MOD 125
+
 #define MENU_SIZE 3
 
 char* MENU_TEXTS[] = {"Szunet", "Hang", "Vissza"};
@@ -117,6 +125,13 @@ void display_graph() {
       active = true;
       int x = draw_index % ili9341_lcd->screen_size.width;
       ili9341_draw_line(ili9341_lcd, ILI9341_BLACK, x, 0, x, ili9341_lcd->screen_size.height - 1);
+      uint32_t current_time = time_buffer[draw_index];
+      if (current_time % SEC_MOD == 0) {
+        ili9341_draw_line(ili9341_lcd, ILI9341_DARKGREY, x, RULER_TICK_Y1, x, SEC_RULER_TICK_Y2);
+      }
+      else if (current_time % HALF_SEC_MOD == 0) {
+        ili9341_draw_line(ili9341_lcd, ILI9341_DARKGREY, x, RULER_TICK_Y1, x, HALF_SEC_RULER_TICK_Y2);
+      }
       if (x == 0) {
         ili9341_draw_pixel(ili9341_lcd, ILI9341_LIGHTGREY, x, translate_y(raw_values[draw_index]));
       }
@@ -204,13 +219,13 @@ void button_turned_left() {
 }
 
 void display_handle_rotary_change(uint16_t value) {
-  if (rotary_position != value % 239) {
-    rotary_position = value % 239;
+  if (rotary_position != value % MAX_HEIGHT) {
+    rotary_position = value % MAX_HEIGHT;
     if (rotary_position < 0) {
       rotary_position = 0;
     }
-    else if (rotary_position > 239) {
-      rotary_position = 239;
+    else if (rotary_position > MAX_HEIGHT) {
+      rotary_position = MAX_HEIGHT;
     }
   }
 }
