@@ -63,6 +63,10 @@ TIM_HandleTypeDef htim16;
 
 /* USER CODE BEGIN PV */
 
+uint32_t old_cnt;
+
+uint32_t last_rotation_check;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -77,6 +81,17 @@ static void MX_LPTIM1_Init(void);
 static void MX_DAC1_Init(void);
 static void MX_TIM7_Init(void);
 /* USER CODE BEGIN PFP */
+
+void handle_rotary_encoder_turn() {
+  if (HAL_GetTick() > last_rotation_check + 50) {
+    last_rotation_check = HAL_GetTick();
+    uint32_t cnt = hlptim1.Instance->CNT;
+    if (old_cnt != cnt) {
+      task_handle_rotary_change(old_cnt - cnt);
+      old_cnt = cnt;
+    }
+  }
+}
 
 /* USER CODE END PFP */
 
@@ -137,24 +152,14 @@ int main(void)
     Error_Handler();
   }
 
+  last_rotation_check = HAL_GetTick();
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1) {
-//    if(__HAL_LPTIM_GET_FLAG(&hlptim1, LPTIM_FLAG_UP)) {
-//      task_handle_interrupt(RIGHT_TURN);
-//      __HAL_LPTIM_CLEAR_FLAG(&hlptim1, LPTIM_FLAG_UP);
-//    }
-//    else {
-//      /* Down counting : set phase of signal 1 to 0 and phase of signal 2 to 90 */
-//      if(__HAL_LPTIM_GET_FLAG(&hlptim1, LPTIM_FLAG_DOWN))
-//      {
-//        task_handle_interrupt(LEFT_TURN);
-//        __HAL_LPTIM_CLEAR_FLAG(&hlptim1, LPTIM_FLAG_DOWN);
-//      }
-//    }
-    task_handle_rotary_change(hlptim1.Instance->CNT);
+    handle_rotary_encoder_turn();
     manage_tasks();
     /* USER CODE END WHILE */
 
@@ -373,7 +378,7 @@ static void MX_LPTIM1_Init(void)
   hlptim1.Instance = LPTIM1;
   hlptim1.Init.Clock.Source = LPTIM_CLOCKSOURCE_APBCLOCK_LPOSC;
   hlptim1.Init.Clock.Prescaler = LPTIM_PRESCALER_DIV1;
-  hlptim1.Init.UltraLowPowerClock.Polarity = LPTIM_CLOCKPOLARITY_RISING;
+  hlptim1.Init.UltraLowPowerClock.Polarity = LPTIM_CLOCKPOLARITY_RISING_FALLING;
   hlptim1.Init.UltraLowPowerClock.SampleTime = LPTIM_CLOCKSAMPLETIME_DIRECTTRANSITION;
   hlptim1.Init.Trigger.Source = LPTIM_TRIGSOURCE_SOFTWARE;
   hlptim1.Init.OutputPolarity = LPTIM_OUTPUTPOLARITY_HIGH;
@@ -546,7 +551,7 @@ static void MX_TIM16_Init(void)
   htim16.Instance = TIM16;
   htim16.Init.Prescaler = 32 - 1;
   htim16.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim16.Init.Period = 4000 - 1;
+  htim16.Init.Period = 5000 - 1;
   htim16.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim16.Init.RepetitionCounter = 0;
   htim16.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
