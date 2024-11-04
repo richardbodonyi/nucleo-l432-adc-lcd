@@ -26,7 +26,7 @@
 #include <stdio.h>
 #include "task_manager.h"
 #include "ili9341_gfx.h"
-#include "stm32l4xx_ll_lptim.h"
+//#include "stm32l4xx_ll_lptim.h"
 
 /* USER CODE END Includes */
 
@@ -53,8 +53,6 @@ CRC_HandleTypeDef hcrc;
 
 DAC_HandleTypeDef hdac1;
 
-LPTIM_HandleTypeDef hlptim1;
-
 SPI_HandleTypeDef hspi1;
 DMA_HandleTypeDef hdma_spi1_tx;
 
@@ -73,7 +71,6 @@ static void MX_ADC1_Init(void);
 static void MX_TIM16_Init(void);
 static void MX_SPI1_Init(void);
 static void MX_CRC_Init(void);
-static void MX_LPTIM1_Init(void);
 static void MX_DAC1_Init(void);
 static void MX_TIM7_Init(void);
 /* USER CODE BEGIN PFP */
@@ -124,7 +121,6 @@ int main(void)
   MX_TIM16_Init();
   MX_SPI1_Init();
   MX_CRC_Init();
-  MX_LPTIM1_Init();
   MX_DAC1_Init();
   MX_TIM7_Init();
   /* USER CODE BEGIN 2 */
@@ -132,10 +128,11 @@ int main(void)
   init_tasks(&hspi1, &htim16, &hadc1, &hdac1);
 
   /* Start LPTIM Encoder mode */
-  if(HAL_OK != HAL_LPTIM_Encoder_Start_IT(&hlptim1, 0x8000))
-  {
-    Error_Handler();
-  }
+//  if(HAL_OK != HAL_LPTIM_Encoder_Start_IT(&hlptim1, 0x8000))
+//  {
+//    Error_Handler();
+//  }
+//  if (HAL_OK != HAL_EXTI_)
 
   /* USER CODE END 2 */
 
@@ -154,7 +151,7 @@ int main(void)
 //        __HAL_LPTIM_CLEAR_FLAG(&hlptim1, LPTIM_FLAG_DOWN);
 //      }
 //    }
-    task_handle_rotary_change(hlptim1.Instance->CNT);
+//    task_handle_rotary_change(hlptim1.Instance->CNT);
     manage_tasks();
     /* USER CODE END WHILE */
 
@@ -352,102 +349,6 @@ static void MX_DAC1_Init(void)
   /* USER CODE BEGIN DAC1_Init 2 */
 
   /* USER CODE END DAC1_Init 2 */
-
-}
-
-/**
-  * @brief LPTIM1 Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_LPTIM1_Init(void)
-{
-
-  /* USER CODE BEGIN LPTIM1_Init 0 */
-  // LL_LPTIM_Disable(LPTIM1);
-  /* USER CODE END LPTIM1_Init 0 */
-
-  /* USER CODE BEGIN LPTIM1_Init 1 */
-
-  /* USER CODE END LPTIM1_Init 1 */
-  hlptim1.Instance = LPTIM1;
-  hlptim1.Init.Clock.Source = LPTIM_CLOCKSOURCE_APBCLOCK_LPOSC;
-  hlptim1.Init.Clock.Prescaler = LPTIM_PRESCALER_DIV1;
-  hlptim1.Init.UltraLowPowerClock.Polarity = LPTIM_CLOCKPOLARITY_RISING;
-  hlptim1.Init.UltraLowPowerClock.SampleTime = LPTIM_CLOCKSAMPLETIME_DIRECTTRANSITION;
-  hlptim1.Init.Trigger.Source = LPTIM_TRIGSOURCE_SOFTWARE;
-  hlptim1.Init.OutputPolarity = LPTIM_OUTPUTPOLARITY_HIGH;
-  hlptim1.Init.UpdateMode = LPTIM_UPDATE_IMMEDIATE;
-  hlptim1.Init.CounterSource = LPTIM_COUNTERSOURCE_EXTERNAL;
-  hlptim1.Init.Input1Source = LPTIM_INPUT1SOURCE_GPIO;
-  hlptim1.Init.Input2Source = LPTIM_INPUT2SOURCE_GPIO;
-  if (HAL_LPTIM_Init(&hlptim1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN LPTIM1_Init 2 */
-
-  // https://community.st.com/t5/stm32-mcus-products/lptim-not-counting-down-in-encoder-mode-always-counts-up-g071/td-p/642341
-
-//  /* Definition of LPTIM1 */
-//
-//  hlptim1.Instance = LPTIM1;
-//  /* reset handle state */
-//  __HAL_LPTIM_RESET_HANDLE_STATE(&hlptim1);
-//
-//  hlptim1.Init.CounterSource                 = LPTIM_COUNTERSOURCE_INTERNAL;
-//  hlptim1.Init.UpdateMode                    = LPTIM_UPDATE_IMMEDIATE;
-//  hlptim1.Init.OutputPolarity                = LPTIM_OUTPUTPOLARITY_HIGH;
-//  hlptim1.Init.Clock.Source                  = LPTIM_CLOCKSOURCE_APBCLOCK_LPOSC;
-//  hlptim1.Init.Clock.Prescaler               = LPTIM_PRESCALER_DIV1;
-//  hlptim1.Init.UltraLowPowerClock.Polarity   = LPTIM_CLOCKPOLARITY_RISING;
-//  hlptim1.Init.UltraLowPowerClock.SampleTime = LPTIM_CLOCKSAMPLETIME_DIRECTTRANSITION;
-//  hlptim1.Init.Trigger.Source                = LPTIM_TRIGSOURCE_SOFTWARE;
-//  hlptim1.Init.Trigger.ActiveEdge            = LPTIM_ACTIVEEDGE_RISING ;
-//  hlptim1.Init.Trigger.SampleTime            = LPTIM_TRIGSAMPLETIME_DIRECTTRANSITION;
-//  hlptim1.Init.Input1Source                  = LPTIM_INPUT1SOURCE_GPIO;
-//  hlptim1.Init.Input2Source                  = LPTIM_INPUT2SOURCE_GPIO;
-//
-//  if(HAL_OK != HAL_LPTIM_Init(&hlptim1))
-//  {
-//  /* Initialization Error */
-//    Error_Handler();
-//  }
-
-  /*
-   * To activate the Encoder mode the ENC bit has to be set to �?1’. The LPTIM must first be
-   * configured in Continuous mode.
-   * When Encoder mode is active, the LPTIM counter is modified automatically following the
-   * speed and the direction of the incremental encoder.
-   */
-//  LL_LPTIM_StartCounter(LPTIM1, LL_LPTIM_OPERATING_MODE_CONTINUOUS);
-
-  // This function must be called when the LPTIM instance is disabled.
-//  LL_LPTIM_SetEncoderMode(LPTIM1, LL_LPTIM_ENCODER_MODE_RISING/*_FALLING*/);
-
-  /*
-   * This function must be called when the LPTIM instance is disabled.
-   * In this mode the LPTIM instance must be clocked by an internal clock
-   * source. Also, the prescaler division ratio must be equal to 1.
-   * LPTIM instance must be configured in continuous mode prior enabling
-   * the encoder mode.
-   */
-//  LL_LPTIM_EnableEncoderMode(LPTIM1);
-//
-//  LL_LPTIM_Enable(LPTIM1);
-
-  /*
-   * The counter just counts continuously between 0 and the
-   * auto-reload value programmed into the LPTIM_ARR register
-   * (0 up to ARR or ARR down to 0 depending on the direction).
-   * Therefore LPTIM_ARR must be configured before starting
-   */
-//  LL_LPTIM_SetAutoReload(LPTIM1, 0xFFFF);
-
-  //LPTIM instance must be enabled before starting the counter.
-//  LL_LPTIM_StartCounter(LPTIM1, LL_LPTIM_OPERATING_MODE_CONTINUOUS);
-
-  /* USER CODE END LPTIM1_Init 2 */
 
 }
 
@@ -654,9 +555,18 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Alternate = GPIO_AF3_USART2;
   HAL_GPIO_Init(VCP_RX_GPIO_Port, &GPIO_InitStruct);
 
+  /*Configure GPIO pins : REnc1_Pin REnc2_Pin */
+  GPIO_InitStruct.Pin = REnc1_Pin|REnc2_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
   /* EXTI interrupt init*/
   HAL_NVIC_SetPriority(EXTI0_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+
+  HAL_NVIC_SetPriority(EXTI9_5_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
 
 /* USER CODE BEGIN MX_GPIO_Init_2 */
 /* USER CODE END MX_GPIO_Init_2 */

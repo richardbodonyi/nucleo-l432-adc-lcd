@@ -56,7 +56,6 @@
 
 /* External variables --------------------------------------------------------*/
 extern DMA_HandleTypeDef hdma_adc1;
-extern LPTIM_HandleTypeDef hlptim1;
 extern DMA_HandleTypeDef hdma_spi1_tx;
 extern TIM_HandleTypeDef htim7;
 extern TIM_HandleTypeDef htim16;
@@ -255,6 +254,28 @@ void DMA1_Channel3_IRQHandler(void)
 }
 
 /**
+  * @brief This function handles EXTI line[9:5] interrupts.
+  */
+void EXTI9_5_IRQHandler(void)
+{
+  /* USER CODE BEGIN EXTI9_5_IRQn 0 */
+
+  if (HAL_GPIO_ReadPin(GPIOB, REnc1_Pin) == GPIO_PIN_SET) {
+    handle_interrupt(LEFT_TURN);
+  }
+  else if (HAL_GPIO_ReadPin(GPIOB, REnc2_Pin) == GPIO_PIN_SET) {
+    handle_interrupt(RIGHT_TURN);
+  }
+
+  /* USER CODE END EXTI9_5_IRQn 0 */
+  HAL_GPIO_EXTI_IRQHandler(REnc1_Pin);
+  HAL_GPIO_EXTI_IRQHandler(REnc2_Pin);
+  /* USER CODE BEGIN EXTI9_5_IRQn 1 */
+
+  /* USER CODE END EXTI9_5_IRQn 1 */
+}
+
+/**
   * @brief This function handles TIM1 update interrupt and TIM16 global interrupt.
   */
 void TIM1_UP_TIM16_IRQHandler(void)
@@ -280,20 +301,6 @@ void TIM7_IRQHandler(void)
   /* USER CODE BEGIN TIM7_IRQn 1 */
 
   /* USER CODE END TIM7_IRQn 1 */
-}
-
-/**
-  * @brief This function handles LPTIM1 global interrupt.
-  */
-void LPTIM1_IRQHandler(void)
-{
-  /* USER CODE BEGIN LPTIM1_IRQn 0 */
-
-  /* USER CODE END LPTIM1_IRQn 0 */
-  HAL_LPTIM_IRQHandler(&hlptim1);
-  /* USER CODE BEGIN LPTIM1_IRQn 1 */
-
-  /* USER CODE END LPTIM1_IRQn 1 */
 }
 
 /* USER CODE BEGIN 1 */

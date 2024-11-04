@@ -92,10 +92,12 @@ void handle_interrupt(uint8_t interrupt_event);
 #define Speaker_GPIO_Port GPIOB
 #define REnc1_Pin GPIO_PIN_5
 #define REnc1_GPIO_Port GPIOB
+#define REnc1_EXTI_IRQn EXTI9_5_IRQn
 #define DC_Pin GPIO_PIN_6
 #define DC_GPIO_Port GPIOB
 #define REnc2_Pin GPIO_PIN_7
 #define REnc2_GPIO_Port GPIOB
+#define REnc2_EXTI_IRQn EXTI9_5_IRQn
 
 /* USER CODE BEGIN Private defines */
 
