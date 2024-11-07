@@ -58,8 +58,6 @@ void Error_Handler(void);
 
 void handle_interrupt(uint8_t interrupt_event);
 
-//void shutdown();
-
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/

@@ -15,7 +15,7 @@ void manage_tasks() {
   display_graph();
 }
 
-void task_handle_rotary_change(uint16_t value) {
+void task_handle_rotary_change(int32_t value) {
   display_handle_rotary_change(value);
 }
 

@@ -17,7 +17,7 @@ void increase_brightness();
 
 void decrease_brightness();
 
-void display_handle_rotary_change(uint16_t value);
+void display_handle_rotary_change(int32_t value);
 
 void display_handle_interrupt(uint8_t interrupt);
 
